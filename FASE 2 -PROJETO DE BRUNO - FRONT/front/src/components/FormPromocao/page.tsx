@@ -1,10 +1,9 @@
-"use client"
+'use client'
 
-import React from 'react'
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import Input from '../Input'
 import Button from '../Button'
 
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import { GetProducts, getProdutos } from '@/api/produto/getProdutos'
 import { parseCookies } from 'nookies'
 
@@ -21,16 +20,14 @@ export default function FormPromocao({ products }: FormPromocaoProps) {
   const [precoPromocao, setPrecoPromocao] = useState('')
   const [loading, setLoading] = useState(false)
 
-  
-
   useEffect(() => {
     const getData = async () => {
       const cookies = parseCookies()
       const secret = process.env.NEXT_PUBLIC_SECRET as string
-      const response = await getProdutos(cookies[secret]) || []
+      const response = (await getProdutos(cookies[secret])) || []
       setProdutos(response)
     }
-    
+
     getData()
   }, [])
 
@@ -47,39 +44,38 @@ export default function FormPromocao({ products }: FormPromocaoProps) {
     setCodigo('')
     setPrecoPromocao('')
     setLoading(false)
-
   }
 
   const handleCategory = (event: ChangeEvent<HTMLSelectElement>) => {
     setCodigo(event.target.value)
   }
-  
+
   return (
-   <div className="container flex flex-col gap-1 w-[600px] mt-24">
+    <div className="container mt-24 flex w-[600px] flex-col gap-1">
       <span className="my-3 text-center text-xl font-bold">
         Registrar promoção
       </span>
-      <form onSubmit={handleForm} className='flex flex-col gap-4 pb-3'>
+      <form onSubmit={handleForm} className="flex flex-col gap-4 pb-3">
         <label>
-            <span className="block text-sm font-medium text-slate-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-              Produtos
-            </span>
-            <select
-              value={produtos?.length ? produtos[0].codigo : ''}
-              required
-              onChange={handleCategory}
-              className="w-full rounded-md border-2 border-gray-300 px-4 py-2 shadow-sm"
-              placeholder="Select category"
-              disabled={!produtos?.length ? true : false}
-            >
-              {produtos?.map((produto) => {
-                return (
-                  <option key={produto.codigo} value={produto.codigo}>
-                    {produto.nome}
-                  </option>
-                )
-              })}
-            </select>
+          <span className="block text-sm font-medium text-slate-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+            Produtos
+          </span>
+          <select
+            value={codigo}
+            required
+            onChange={handleCategory}
+            className="w-full rounded-md border-2 border-gray-300 px-4 py-2 shadow-sm"
+            placeholder="Select category"
+            disabled={!produtos?.length}
+          >
+            {produtos?.map((produto) => {
+              return (
+                <option key={produto.codigo} value={produto.codigo}>
+                  {produto.nome}
+                </option>
+              )
+            })}
+          </select>
         </label>
         <Input
           value={precoPromocao}
@@ -95,6 +91,6 @@ export default function FormPromocao({ products }: FormPromocaoProps) {
           Register
         </Button>
       </form>
-   </div>
+    </div>
   )
 }
